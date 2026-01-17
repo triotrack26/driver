@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TrioTrack Driver Partner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Roboto:wght@300;400;500&display=swap');
+
+        /* BRANDING */
+        body { font-family: 'Roboto', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
+
+        /* DARK MODE */
+        body.dark-mode { background-color: #121212 !important; color: #ffffff !important; }
+        .dark-mode .card { background-color: #1e1e1e; border-color: #333; color: white; }
+        .dark-mode .form-control { background-color: #2d2d2d; color: #fff; border-color: #444; }
+        .dark-mode .section-card { background: #1e1e1e; }
+
+        /* SPA ANIMATION */
+        .page-section { display: none; animation: slideUp 0.4s ease-out; padding-bottom: 80px; }
+        .page-section.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* BRAND TEXT */
+        .brand-text {
+            background: linear-gradient(90deg, #ffc107, #fd7e14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* CARDS */
+        .section-card {
+            cursor: pointer; transition: 0.3s; border: none; border-bottom: 4px solid #ffc107;
+            background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .section-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        /* PULSE ANIMATION */
+        .pulse-status { width: 15px; height: 15px; background: #198754; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); } 100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); } }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold small">
+            <i class="fas fa-bus-alt text-warning me-2"></i>TRIOTRACK <span class="badge bg-warning text-dark ms-1">PARTNER</span>
+        </span>
+        <div class="d-flex align-items-center gap-2 text-white">
+            <small id="time-display" class="d-none d-sm-block font-monospace"></small>
+            <button class="btn btn-sm btn-outline-secondary rounded-circle" onclick="toggleTheme()">
+                <i class="fas fa-adjust"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- PAGE 1: WELCOME -->
+    <div id="page-welcome" class="page-section active text-center pt-4">
+        <h1 class="display-4 fw-bold brand-text mb-2">DRIVER CONSOLE</h1>
+        <p class="text-muted letter-spacing-2">REAL-TIME TELEMETRY SYSTEM</p>
+        
+        <div class="my-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/3066/3066259.png" alt="Driver" width="120" class="mb-4 drop-shadow">
+            <div class="card p-3 shadow-sm mx-auto" style="max-width: 500px;">
+                <p class="mb-0 small text-muted">
+                    Welcome to the TrioTrack Partner Network. Broadcast your location securely to assist thousands of commuters.
+                </p>
+            </div>
+        </div>
+
+        <button onclick="navigateTo('page-sections')" class="btn btn-warning btn-lg w-75 rounded-pill shadow fw-bold">
+            Start Session <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+    </div>
+
+    <!-- PAGE 2: SECTIONS -->
+    <div id="page-sections" class="page-section">
+        <h4 class="mb-4 text-center fw-bold">Select Fleet Category</h4>
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="card section-card p-4 text-center h-100" onclick="proceedToLogin('Private Bus')">
+                    <i class="fas fa-bus text-warning fa-2x mb-2"></i>
+                    <h6 class="fw-bold">PRIVATE</h6>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card section-card p-4 text-center h-100" onclick="proceedToLogin('KSRTC')">
+                    <i class="fas fa-landmark text-success fa-2x mb-2"></i>
+                    <h6 class="fw-bold">KSRTC</h6>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card section-card p-4 text-center h-100" onclick="proceedToLogin('Interstate')">
+                    <i class="fas fa-road text-danger fa-2x mb-2"></i>
+                    <h6 class="fw-bold">INTERSTATE</h6>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card section-card p-4 text-center h-100" onclick="alert('Module locked for updates.')">
+                    <i class="fas fa-university text-secondary fa-2x mb-2"></i>
+                    <h6 class="fw-bold">INSTITUTE</h6>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button onclick="navigateTo('page-welcome')" class="btn btn-link text-muted">Go Back</button>
+        </div>
+    </div>
+
+    <!-- PAGE 3: LOGIN -->
+    <div id="page-login" class="page-section">
+        <div class="card mx-auto shadow border-0" style="max-width: 400px;">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold">Verification</h3>
+                    <span id="login-category-display" class="badge bg-secondary">Fleet Access</span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold">BUS NUMBER (ID)</label>
+                    <input type="text" id="busNumber" class="form-control form-control-lg bg-light" placeholder="e.g. KL-01" style="text-transform: uppercase;">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="small text-muted fw-bold">SECURE PIN</label>
+                    <input type="password" id="password" class="form-control form-control-lg bg-light" placeholder="••••••">
+                </div>
+                
+                <button id="loginBtn" class="btn btn-dark w-100 py-3 fw-bold shadow-sm">
+                    AUTHENTICATE & START <i class="fas fa-satellite-dish ms-2"></i>
+                </button>
+                <p id="msg" class="text-center text-danger mt-3 small fw-bold"></p>
+                <button onclick="navigateTo('page-sections')" class="btn btn-sm w-100 text-muted mt-2">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: ACTIVE DASHBOARD -->
+    <div id="page-dashboard" class="page-section text-center pt-5">
+        <div class="card shadow-lg border-0 mb-4 position-relative overflow-hidden">
+            <div class="position-absolute top-0 start-0 w-100" style="height: 5px; background: #198754;"></div>
+            <div class="card-body p-5">
+                <div class="pulse-status mb-3"></div>
+                <h6 class="text-success fw-bold letter-spacing-2">BROADCASTING LIVE</h6>
+                <h1 id="displayBus" class="display-1 fw-bold my-2">--</h1>
+                <p class="text-muted small">GPS Coordinates are being updated.</p>
+            </div>
+        </div>
+
+        <div class="card bg-dark text-white p-3 mx-auto shadow" style="max-width: 500px;">
+            <div class="d-flex justify-content-between border-bottom border-secondary pb-2 mb-2">
+                <small>Telemetry Log</small>
+                <small class="text-info"><i class="fas fa-sync fa-spin"></i> Active</small>
+            </div>
+            <p id="logs" class="mb-0 font-monospace small text-start ps-2">Waiting for satellite lock...</p>
+        </div>
+        
+        <button id="signOutBtn" class="btn btn-outline-danger mt-5 px-5 py-2 rounded-pill fw-bold">
+            <i class="fas fa-power-off me-2"></i> End Trip
+        </button>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDcWwo0m2eS1ndyC06U1G_JF1J7Y1WNlfQ",
+      authDomain: "triotrack-66dd6.firebaseapp.com",
+      projectId: "triotrack-66dd6",
+      storageBucket: "triotrack-66dd6.firebasestorage.app",
+      messagingSenderId: "994389952848",
+      appId: "1:994389952848:web:659fbc330f2d660dfb0455",
+      measurementId: "G-B7TMFX0F21"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let watchID = null;
+
+    window.navigateTo = (pageId) => {
+        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0, 0);
+    };
+
+    window.proceedToLogin = (cat) => {
+        document.getElementById('login-category-display').innerText = cat;
+        navigateTo('page-login');
+    };
+
+    window.toggleTheme = () => document.body.classList.toggle('dark-mode');
+
+    setInterval(() => {
+        document.getElementById('time-display').innerText = new Date().toLocaleTimeString();
+    }, 1000);
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const busNum = document.getElementById('busNumber').value.toUpperCase().trim();
+        const pass = document.getElementById('password').value.trim();
+        const msg = document.getElementById('msg');
+        if (!busNum || !pass) return msg.innerText = "Credentials Required";
+        
+        document.getElementById('loginBtn').disabled = true;
+        msg.innerText = "Verifying...";
+
+        try {
+            const docSnap = await getDoc(doc(db, "credentials", busNum));
+            if (docSnap.exists() && docSnap.data().password === pass) {
+                startTracking(busNum);
+            } else {
+                msg.innerText = "Invalid ID or Password";
+                document.getElementById('loginBtn').disabled = false;
+            }
+        } catch (e) { 
+            msg.innerText = "Network Error";
+            document.getElementById('loginBtn').disabled = false;
+        }
+    });
+
+    function startTracking(busNum) {
+        navigateTo('page-dashboard');
+        document.getElementById('displayBus').innerText = busNum;
+
+        if (navigator.geolocation) {
+            watchID = navigator.geolocation.watchPosition(async (pos) => {
+                const { latitude, longitude, speed } = pos.coords;
+                try {
+                    await setDoc(doc(db, "locations", busNum), {
+                        busNumber: busNum, lat: latitude, lng: longitude, speed: speed || 0,
+                        lastUpdated: new Date().toISOString()
+                    });
+                    document.getElementById('logs').innerHTML = `> Lat: ${latitude.toFixed(5)}<br>> Lng: ${longitude.toFixed(5)}<br>> Time: ${new Date().toLocaleTimeString()}`;
+                } catch(err) { console.error(err); }
+            }, (err) => alert("GPS Error: " + err.message), { enableHighAccuracy: true });
+        } else { alert("GPS not supported."); }
+    }
+
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+        if(confirm("End Trip?")) location.reload();
+    });
+</script>
+</body>
+</html>
