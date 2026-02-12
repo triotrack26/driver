@@ -10,22 +10,18 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Roboto:wght@300;400;500&display=swap');
 
-        /* BRANDING */
         body { font-family: 'Roboto', sans-serif; transition: background-color 0.3s, color 0.3s; }
         h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
 
-        /* DARK MODE */
         body.dark-mode { background-color: #121212 !important; color: #ffffff !important; }
         .dark-mode .card { background-color: #1e1e1e; border-color: #333; color: white; }
         .dark-mode .form-control { background-color: #2d2d2d; color: #fff; border-color: #444; }
-        .dark-mode .section-card { background: #1e1e1e; }
-
+        
         /* SPA ANIMATION */
         .page-section { display: none; animation: slideUp 0.4s ease-out; padding-bottom: 80px; }
         .page-section.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* BRAND TEXT */
         .brand-text {
             background: linear-gradient(90deg, #ffc107, #fd7e14);
             -webkit-background-clip: text;
@@ -33,16 +29,21 @@
             font-weight: 800;
         }
 
-        /* CARDS */
         .section-card {
             cursor: pointer; transition: 0.3s; border: none; border-bottom: 4px solid #ffc107;
             background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .section-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        /* PULSE ANIMATION */
         .pulse-status { width: 15px; height: 15px; background: #198754; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); } 100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); } }
+
+        /* Lock Screen Overlay */
+        #lock-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: black; color: #333; z-index: 9999;
+            display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -61,6 +62,14 @@
         </div>
     </div>
 </nav>
+
+<!-- Screen Saver / Lock Overlay -->
+<div id="lock-overlay">
+    <i class="fas fa-lock fa-3x mb-3 text-secondary"></i>
+    <h3 class="text-secondary">Tracking Active</h3>
+    <small>Tap & Hold to Unlock</small>
+    <button class="btn btn-outline-secondary mt-5" id="unlockBtn">Unlock Screen</button>
+</div>
 
 <div class="container mt-4">
 
@@ -154,6 +163,9 @@
                 <h6 class="text-success fw-bold letter-spacing-2">BROADCASTING LIVE</h6>
                 <h1 id="displayBus" class="display-1 fw-bold my-2">--</h1>
                 <p class="text-muted small">GPS Coordinates are being updated.</p>
+                <button class="btn btn-outline-secondary btn-sm rounded-pill mt-2" onclick="enableLockMode()">
+                    <i class="fas fa-lock me-1"></i> Screen Lock (Battery Saver)
+                </button>
             </div>
         </div>
 
@@ -176,6 +188,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // 1. FIREBASE LOGIC (UNCHANGED)
     const firebaseConfig = {
       apiKey: "AIzaSyDcWwo0m2eS1ndyC06U1G_JF1J7Y1WNlfQ",
       authDomain: "triotrack-66dd6.firebaseapp.com",
@@ -189,6 +202,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let watchID = null;
+    let isTracking = false;
 
     window.navigateTo = (pageId) => {
         document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
@@ -202,6 +216,22 @@
     };
 
     window.toggleTheme = () => document.body.classList.toggle('dark-mode');
+
+    // 2. SAFETY: Prevent Tab Closure
+    window.addEventListener('beforeunload', (event) => {
+        if (isTracking) {
+            event.preventDefault();
+            event.returnValue = ''; // Trigger browser warning
+        }
+    });
+
+    // Screen Lock Features
+    window.enableLockMode = () => {
+        document.getElementById('lock-overlay').style.display = 'flex';
+    };
+    document.getElementById('unlockBtn').addEventListener('click', () => {
+        document.getElementById('lock-overlay').style.display = 'none';
+    });
 
     setInterval(() => {
         document.getElementById('time-display').innerText = new Date().toLocaleTimeString();
@@ -233,6 +263,7 @@
     function startTracking(busNum) {
         navigateTo('page-dashboard');
         document.getElementById('displayBus').innerText = busNum;
+        isTracking = true; // Sets the safety flag
 
         if (navigator.geolocation) {
             watchID = navigator.geolocation.watchPosition(async (pos) => {
@@ -249,7 +280,10 @@
     }
 
     document.getElementById('signOutBtn').addEventListener('click', () => {
-        if(confirm("End Trip?")) location.reload();
+        if(confirm("Are you sure you want to End Trip? GPS will stop broadcasting.")) {
+            isTracking = false; // Disable safety flag
+            location.reload();
+        }
     });
 </script>
 </body>
